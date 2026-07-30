@@ -1,0 +1,20 @@
+---
+import App from '../App.tsx';
+import '../index.css';
+---
+
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexus Global — Modern Management Consultancy</title>
+    <meta name="description" content="Awards-level 3D animated experience for Nexus Global management consultancy featuring WebGPU/WebGL interactive scenes, morphing 3D geometry, particle fields, and data visualizations." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#08090E] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden font-sans">
+    <App client:only="react" />
+  </body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Nexus Global - Management Consultancy",
+  "description": "Awards-level 3D animated experience for Nexus Global management consultancy featuring WebGPU/WebGL interactive scenes, morphing 3D geometry, particle fields, and data visualizations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
