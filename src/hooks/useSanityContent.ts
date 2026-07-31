@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getSiteContent } from '../sanity/client';
+import { getSiteContent, subscribeToContentChanges } from '../sanity/client';
 import { DEFAULT_CONTENT } from '../data/siteContent';
 import type { ContentBundle } from '../data/siteContent';
 
@@ -29,8 +29,16 @@ export function useSanityContent(): ContentBundle {
     loadContent().then((loaded) => {
       if (!cancelled) setContent(loaded);
     });
+    const unsubscribe = subscribeToContentChanges(() => {
+      contentCache = null;
+      fetchPromise = null;
+      loadContent().then((loaded) => {
+        if (!cancelled) setContent(loaded);
+      });
+    });
     return () => {
       cancelled = true;
+      unsubscribe();
     };
   }, []);
 

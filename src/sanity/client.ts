@@ -28,8 +28,46 @@ export const sanityClient: SanityClient = createClient({
   projectId,
   dataset,
   apiVersion: '2025-08-15',
-  useCdn: true,
+  useCdn: false,
 });
+
+const CONTENT_TYPES = [
+  'hero',
+  'siteSettings',
+  'sectionHeadings',
+  'aboutSection',
+  'navigation',
+  'service',
+  'caseStudy',
+  'teamMember',
+  'expertiseSector',
+  'corePillar',
+  'stat',
+  'processStep',
+  'insight',
+  'testimonial',
+  'pricingTier',
+  'contactSettings',
+  'footerOffice',
+];
+
+export function subscribeToContentChanges(onChange: () => void): () => void {
+  const subscription = sanityClient
+    .listen(
+      `*[_type in $types]`,
+      { types: CONTENT_TYPES },
+      { includeResult: false, includeMutations: false, visibility: 'query' }
+    )
+    .subscribe({
+      next: (event) => {
+        if (event.type !== 'mutation') return;
+        if (typeof event.documentId === 'string' && event.documentId.startsWith('drafts.')) return;
+        onChange();
+      },
+      error: () => {},
+    });
+  return () => subscription.unsubscribe();
+}
 
 export type SanityRawDoc = Record<string, unknown>;
 
