@@ -35,9 +35,11 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
 
     let isVisible = true;
     let animationFrameId: number | null = null;
+    let cleanup: (() => void) | undefined;
 
-    // Detect WebGPU / WebGL support
-    detectWebGPU().then(() => {
+    const setupScene = () => {
+      if (cleanup) cleanup();
+
       // Create Three.js Scene
       const scene = new THREE.Scene();
 
@@ -54,13 +56,21 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
 
       const pixelRatio = Math.min(window.devicePixelRatio || 1, maxDpr);
 
-      // Renderer setup
-      const renderer = new THREE.WebGLRenderer({
-        canvas,
-        alpha: true,
-        antialias: qualityPreset !== 'saver',
-        powerPreference: qualityPreset === 'high' ? 'high-performance' : 'low-power',
-      });
+      // Renderer setup. WebGL can be unavailable inside embedded previews
+      // (sandboxed iframes, disabled GPU, VMs), so fail gracefully instead of
+      // throwing an unhandled error that can blank the page.
+      let renderer: THREE.WebGLRenderer;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas,
+          alpha: true,
+          antialias: qualityPreset !== 'saver',
+          powerPreference: qualityPreset === 'high' ? 'high-performance' : 'low-power',
+        });
+      } catch (err) {
+        console.warn('[Canvas3D] WebGL unavailable; 3D scene disabled.', err);
+        return;
+      }
 
       renderer.setSize(width, height);
       renderer.setPixelRatio(pixelRatio);
@@ -97,7 +107,11 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
       // Cleanup hook returned by consumer onSceneReady
       let userCleanup: (() => void) | void;
       if (onSceneReady) {
-        userCleanup = onSceneReady({ scene, camera, renderer, mouse });
+        try {
+          userCleanup = onSceneReady({ scene, camera, renderer, mouse });
+        } catch (err) {
+          console.warn('[Canvas3D] onSceneReady threw; skipping scene content.', err);
+        }
       }
 
       // Resize observer
@@ -137,7 +151,7 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
           const currentFps = Math.round((frameCount * 1000) / (currentTime - fpsTimer));
           const frameTime = delta * 1000;
           const info = renderer.info;
-          
+
           if (onFpsUpdate) {
             onFpsUpdate(
               currentFps,
@@ -175,7 +189,7 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
       animationFrameId = requestAnimationFrame(animate);
 
       // Main component cleanup
-      return () => {
+      cleanup = () => {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
         resizeObserver.disconnect();
         intersectionObserver.disconnect();
@@ -186,7 +200,14 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
         if (userCleanup) userCleanup();
         renderer.dispose();
       };
-    });
+    };
+
+    // Detect WebGPU / WebGL support
+    detectWebGPU().then(setupScene).catch(setupScene);
+
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, [qualityPreset, interactive]);
 
   return (

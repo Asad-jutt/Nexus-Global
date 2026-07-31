@@ -9,12 +9,16 @@
     "build:vite": "vite build",
     "preview": "vite preview --port=3000 --host=0.0.0.0",
     "clean": "rm -rf dist .astro",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "studio": "sanity start",
+    "studio:build": "sanity build studio-dist",
+    "studio:deploy": "sanity deploy"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
     "@astrojs/vercel": "^11.0.4",
     "@google/genai": "^2.4.0",
+    "@sanity/vision": "^6.8.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/three": "^0.185.1",
     "@vitejs/plugin-react": "^5.0.4",
@@ -25,17 +29,19 @@
     "motion": "^12.23.24",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
+    "sanity": "^6.8.0",
+    "styled-components": "^6.4.4",
     "three": "^0.185.1",
     "vite": "^6.2.3"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3",
-    "@types/express": "^4.17.21"
+    "vite": "^6.2.3"
   }
 }

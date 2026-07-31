@@ -22,5 +22,14 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".astro",
+    "studio-dist",
+    "sanity.config.js",
+    "sanity.cli.js",
+    "src/sanity"
+  ]
 }
