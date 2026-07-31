@@ -3,6 +3,8 @@ build/
 dist/
 studio-dist/
 coverage/
+.astro/
+.vercel/
 .sanity/
 .DS_Store
 *.log

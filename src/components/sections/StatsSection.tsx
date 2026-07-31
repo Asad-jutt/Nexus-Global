@@ -4,66 +4,22 @@ import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
 import { ScrollCounter } from '../Animations/ScrollCounter';
 import { ShieldCheck, TrendingUp, Users, Award, Sparkles } from 'lucide-react';
+import { useSanityContent } from '../../hooks/useSanityContent';
+import type { StatItemContent } from '../../types';
 
-interface StatItem {
-  id: string;
-  value: number;
-  prefix?: string;
-  suffix: string;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-  accentColor: string;
-  shape: 'torus' | 'cylinder' | 'sphere' | 'octahedron';
-  decimals?: number;
-}
-
-const STATS_DATA: StatItem[] = [
-  {
-    id: 'engagements',
-    value: 500,
-    suffix: '+',
-    label: 'Global Engagements',
-    description: 'Executed across Fortune 500, sovereign funds, and defense prime contractors.',
-    icon: <ShieldCheck className="w-5 h-5 text-cyan-400" />,
-    accentColor: '#00f0ff',
-    shape: 'torus',
-  },
-  {
-    id: 'value-created',
-    value: 2.3,
-    prefix: '$',
-    suffix: 'B+',
-    label: 'Client Value Realized',
-    description: 'Measured via audited EBITDA expansion, OPEX savings, and capital efficiency.',
-    icon: <TrendingUp className="w-5 h-5 text-emerald-400" />,
-    accentColor: '#00ff9d',
-    shape: 'cylinder',
-    decimals: 1
-  },
-  {
-    id: 'retention',
-    value: 98,
-    suffix: '%',
-    label: 'Retention & Expansion',
-    description: 'Enterprise clients extending multi-year strategic advisory frameworks.',
-    icon: <Users className="w-5 h-5 text-purple-400" />,
-    accentColor: '#a855f7',
-    shape: 'octahedron',
-  },
-  {
-    id: 'experience',
-    value: 15,
-    suffix: ' Yrs',
-    label: 'Pioneering Leadership',
-    description: 'A decade and a half of continuous system innovations in high-velocity markets.',
-    icon: <Award className="w-5 h-5 text-amber-400" />,
-    accentColor: '#ffb800',
-    shape: 'sphere',
-  },
-];
+const STAT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  ShieldCheck,
+  TrendingUp,
+  Users,
+  Award,
+};
 
 export const StatsSection: React.FC = () => {
+  const { stats, sectionHeadings } = useSanityContent();
+  const STATS_DATA: (StatItemContent & { icon: React.ReactNode })[] = stats.map((stat) => {
+    const Icon = STAT_ICONS[stat.iconKey] ?? ShieldCheck;
+    return { ...stat, icon: <Icon className="w-5 h-5 text-cyan-400" /> };
+  });
   return (
     <section className="relative py-24 bg-[#08090e] border-t border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,11 +28,11 @@ export const StatsSection: React.FC = () => {
         <ScrollReveal className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
             <Sparkles className="w-3.5 h-3.5" />
-            Audited Operational Benchmarks
+            {sectionHeadings.stats.tag}
           </div>
 
           <h2 className="font-syne font-extrabold text-3xl sm:text-4xl text-white tracking-tight">
-            Quantifiable Impact Across Scale
+            {sectionHeadings.stats.title}
           </h2>
         </ScrollReveal>
 

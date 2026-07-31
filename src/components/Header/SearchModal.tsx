@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, X, ArrowRight, Lightbulb, Briefcase, Users, FileText } from 'lucide-react';
 import { soundEngine } from '../../utils/audio';
-import { SERVICES_DATA, CASE_STUDIES, TEAM_MEMBERS } from '../../data/consultancyData';
+import { useSanityContent } from '../../hooks/useSanityContent';
 
 interface SearchModalProps {
   onOpenContact: () => void;
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({ onOpenContact }) => {
+  const { services: SERVICES_DATA, caseStudies: CASE_STUDIES, team: TEAM_MEMBERS, sectionHeadings } = useSanityContent();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -103,8 +104,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onOpenContact }) => {
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search transformation services, case studies, or advisors..."
-                  className="w-full bg-transparent text-slate-100 placeholder:text-slate-500 text-sm focus:outline-none font-sans"
+                  placeholder="Search transformation services, case studies, or advisors..."                  className="w-full bg-transparent text-slate-100 placeholder:text-slate-500 text-sm focus:outline-none font-sans"
                 />
                 {query && (
                   <button onClick={() => setQuery('')} className="text-slate-400 hover:text-white text-xs font-mono">
@@ -124,7 +124,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ onOpenContact }) => {
                 {!query.trim() ? (
                   <div className="py-8 text-center text-slate-500 space-y-2">
                     <FileText className="w-8 h-8 mx-auto text-slate-600 opacity-50" />
-                    <p className="text-xs font-mono">Type to query Nexus Global knowledge matrix</p>
+                    <p className="text-xs font-mono">{sectionHeadings.search.intro || 'Type to query Nexus Global knowledge matrix'}</p>
                     <div className="flex items-center justify-center gap-2 pt-2">
                       {['Digital Transformation', 'AI Strategy', 'FinTech', 'Supply Chain'].map((tag) => (
                         <button

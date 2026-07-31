@@ -6,6 +6,7 @@ import { AnimatedModelObject } from '../3d/AnimatedModel';
 import { GeometryType, QualityPreset } from '../../types';
 import { soundEngine } from '../../utils/audio';
 import { easingPresets } from '../../utils/animationConfig';
+import { useSanityContent } from '../../hooks/useSanityContent';
 import { ArrowDown, Layers, Box, Pyramid, ChevronRight } from 'lucide-react';
 
 interface HeroSectionProps {
@@ -15,6 +16,7 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUpdate, qualityPreset }) => {
+  const { hero } = useSanityContent();
   const [activeShape, setActiveShape] = useState<GeometryType>('cube');
   const modelRef = useRef<AnimatedModelObject | null>(null);
 
@@ -34,8 +36,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
   };
 
   const shapes: { type: GeometryType; label: string; icon: React.ReactNode }[] = [
-    { type: 'cube', label: 'Liquid Matrix', icon: <Box className="w-3.5 h-3.5" /> },
-    { type: 'prism', label: 'Fluid Flow', icon: <Pyramid className="w-3.5 h-3.5" /> },
+    { type: 'cube', label: hero.shapeLabels[0] ?? 'Liquid Matrix', icon: <Box className="w-3.5 h-3.5" /> },
+    { type: 'prism', label: hero.shapeLabels[1] ?? 'Fluid Flow', icon: <Pyramid className="w-3.5 h-3.5" /> },
   ];
 
   return (
@@ -110,7 +112,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-cyan-500/30 text-cyan-300 text-xs font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(0,240,255,0.15)] pointer-events-auto"
           >
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-            Strategic Management & Digital Transformation
+            {hero.eyebrow}
           </motion.div>
 
           {/* Interactive 3D Model Trigger Banner */}
@@ -122,7 +124,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg glass-panel hover:bg-white/10 text-xs font-mono text-slate-300 hover:text-cyan-300 transition-all pointer-events-auto cursor-pointer border border-white/10"
           >
             <Layers className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Pulse 3D Model</span>
+            <span>{hero.pulseLabel}</span>
           </motion.button>
         </div>
 
@@ -134,19 +136,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             transition={{ duration: 0.6, ease: easingPresets.smooth, delay: 0 }}
             className="font-syne font-extrabold text-4xl sm:text-6xl md:text-7xl tracking-tight leading-[1.08] text-white mb-6"
           >
-            Architecting <br />
-            <span className="text-gradient-cyan">Exponential</span> Growth.
+            {hero.headlineLine1} <br />
+            <span className="text-gradient-cyan">{hero.headlineHighlight}</span>{' '}
+            {hero.headlineLine2}
           </motion.h1>
-
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: easingPresets.smooth, delay: 0.15 }}
             className="text-slate-300 text-base sm:text-lg md:text-xl font-normal leading-relaxed max-w-2xl mb-8"
           >
-            Nexus Global unifies corporate strategy, digital transformation, operational excellence, and cyber risk governance for global market leaders.
+            {hero.subheadline}
           </motion.p>
-
           {/* Action CTAs */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -163,16 +164,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
               }}
               className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 text-slate-950 font-syne font-bold text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-[0_0_30px_rgba(0,240,255,0.4)] cursor-pointer group"
             >
-              Initiate Engagement
+              {hero.primaryCta}
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.button>
-
             <a
               href="#services"
               onClick={() => soundEngine.playClick()}
               className="flex items-center gap-2 px-6 py-3.5 rounded-xl glass-panel border border-white/15 text-slate-200 font-syne font-semibold text-sm hover:bg-white/10 hover:border-cyan-400/40 transition-all cursor-pointer"
             >
-              Explore Capabilities
+              {hero.secondaryCta}
             </a>
           </motion.div>
         </div>
@@ -215,7 +215,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             onClick={() => soundEngine.playClick()}
             className="flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer group"
           >
-            <span>Scroll for Philosophy</span>
+            <span>{hero.scrollLabel}</span>
             <motion.span
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}

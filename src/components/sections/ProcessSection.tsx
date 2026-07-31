@@ -4,67 +4,13 @@ import { Canvas3D } from '../3d/Canvas3D';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
+import { useSanityContent } from '../../hooks/useSanityContent';
+import type { ProcessStepContent } from '../../types';
 import { ArrowRight, CheckCircle2, ChevronRight, Workflow, Zap } from 'lucide-react';
 
-interface ProcessStep {
-  stepNumber: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  deliverables: string[];
-  metrics: string;
-  accentColor: string;
-}
-
-const PROCESS_STEPS: ProcessStep[] = [
-  {
-    stepNumber: '01',
-    title: 'Discovery & Assessment',
-    subtitle: 'Deep System Diagnostics',
-    description: 'Autonomous telemetry sweep, operational workflow mapping, and organizational bottleneck identification using high-resolution data models.',
-    deliverables: ['System Vulnerability Matrix', 'OPEX Baseline Telemetry', 'Architecture Benchmark'],
-    metrics: '-35% Latency in Discovery',
-    accentColor: '#00f0ff',
-  },
-  {
-    stepNumber: '02',
-    title: 'Strategy Development',
-    subtitle: 'Algorithmic Optimization',
-    description: 'Constructing proprietary execution roadmaps, simulation-tested scenarios, and multi-threaded risk mitigation structures.',
-    deliverables: ['Quantum-Safe Migration Strategy', 'EBITDA Growth Map', 'Resource Allocation Model'],
-    metrics: '99.4% Forecast Accuracy',
-    accentColor: '#00ff9d',
-  },
-  {
-    stepNumber: '03',
-    title: 'Architecture & Design',
-    subtitle: 'Modern Engineering Blueprints',
-    description: 'Engineering fault-tolerant cloud infrastructures, real-time analytics engines, and resilient human-in-the-loop operational loops.',
-    deliverables: ['Full-Stack Microservices Design', 'Zero-Trust Security Schema', 'Data Flow Schema'],
-    metrics: 'Zero-Downtime Blueprint',
-    accentColor: '#a855f7',
-  },
-  {
-    stepNumber: '04',
-    title: 'Implementation & Execution',
-    subtitle: 'High-Velocity Integration',
-    description: 'Agile deployment sprints with continuous validation, WebGPU-accelerated analytics, and seamless enterprise ERP/CRM integration.',
-    deliverables: ['Production Engine Deployment', 'Real-time Telemetry Dashboard', 'CI/CD Pipeline Setup'],
-    metrics: '4x Deployment Velocity',
-    accentColor: '#3b82f6',
-  },
-  {
-    stepNumber: '05',
-    title: 'Monitoring & Continuous Scale',
-    subtitle: 'Autonomous Self-Healing Loop',
-    description: 'Continuous AI feedback loops, real-time operational drift detection, and automated scaling across international node clusters.',
-    deliverables: ['24/7 Autonomous Telemetry', 'Model Re-training Pipeline', 'Executive KPI Console'],
-    metrics: '99.999% Operational Uptime',
-    accentColor: '#ffb800',
-  },
-];
-
 export const ProcessSection: React.FC = () => {
+  const { processSteps, sectionHeadings } = useSanityContent();
+  const PROCESS_STEPS: ProcessStepContent[] = processSteps;
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
   const activeStep = PROCESS_STEPS[activeStepIndex];
 
@@ -80,14 +26,14 @@ export const ProcessSection: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
               <Workflow className="w-3.5 h-3.5" />
-              Methodology Protocol
+              {sectionHeadings.process.tag}
             </div>
             <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight">
-              A Precision Pipeline for Strategic Scale
+              {sectionHeadings.process.title}
             </h2>
           </div>
           <p className="text-slate-400 text-sm max-w-md">
-            Our 5-stage transformation framework turns complex enterprise problems into repeatable, scalable, and autonomous growth engines.
+            {sectionHeadings.process.intro}
           </p>
         </ScrollReveal>
 

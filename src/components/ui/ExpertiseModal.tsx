@@ -120,14 +120,20 @@ export const EXPERTISE_DETAILS: Record<string, ExpertiseDetail> = {
 
 interface ExpertiseModalProps {
   expertiseKey: string | null;
+  expertise?: Record<string, ExpertiseDetail>;
   onClose: () => void;
   onOpenContact: () => void;
 }
 
-export const ExpertiseModal: React.FC<ExpertiseModalProps> = ({ expertiseKey, onClose, onOpenContact }) => {
-  if (!expertiseKey || !EXPERTISE_DETAILS[expertiseKey]) return null;
+export const ExpertiseModal: React.FC<ExpertiseModalProps> = ({
+  expertiseKey,
+  expertise = EXPERTISE_DETAILS,
+  onClose,
+  onOpenContact,
+}) => {
+  if (!expertiseKey || !expertise[expertiseKey]) return null;
 
-  const detail = EXPERTISE_DETAILS[expertiseKey];
+  const detail = expertise[expertiseKey];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">

@@ -2,12 +2,12 @@ import React, { useState, useRef } from 'react';
 import * as THREE from 'three';
 import { Canvas3D } from '../3d/Canvas3D';
 import { DataViz3DObject } from '../3d/DataViz3D';
-import { CASE_STUDIES } from '../../data/consultancyData';
 import { CaseStudy } from '../../types';
 import { CaseStudyModal } from '../ui/CaseStudyModal';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollClipReveal } from '../Animations/ScrollClipReveal';
+import { useSanityContent } from '../../hooks/useSanityContent';
 import { BarChart3, ChevronRight } from 'lucide-react';
 
 interface CaseStudiesSectionProps {
@@ -15,6 +15,8 @@ interface CaseStudiesSectionProps {
 }
 
 export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenContact }) => {
+  const { caseStudies, sectionHeadings } = useSanityContent();
+  const CASE_STUDIES = caseStudies;
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
   const [activeBarIndex, setActiveBarIndex] = useState(0);
   const [modalCaseStudy, setModalCaseStudy] = useState<CaseStudy | null>(null);
@@ -51,10 +53,10 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenCo
           <div className="flex flex-col items-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-2">
               <BarChart3 className="w-3.5 h-3.5" />
-              Empirical Case Telemetry
+              {sectionHeadings.caseStudies.tag}
             </div>
             <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight">
-              3D Value Realization
+              {sectionHeadings.caseStudies.title}
             </h2>
           </div>
 

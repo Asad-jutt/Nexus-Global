@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { TEAM_MEMBERS } from '../../data/consultancyData';
 import { TeamMember } from '../../types';
 import { soundEngine } from '../../utils/audio';
+import { useSanityContent } from '../../hooks/useSanityContent';
 import { Users, X, Award, MapPin, Sparkles, ExternalLink } from 'lucide-react';
 
 export const TeamSection: React.FC = () => {
+  const { team, sectionHeadings } = useSanityContent();
+  const TEAM_MEMBERS: TeamMember[] = team;
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   return (
@@ -15,15 +17,15 @@ export const TeamSection: React.FC = () => {
         <div className="max-w-3xl mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
             <Users className="w-3.5 h-3.5" />
-            Executive Leadership
+            {sectionHeadings.team.tag}
           </div>
 
           <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight mb-4">
-            Systemic Architects & Principals
+            {sectionHeadings.team.title}
           </h2>
 
           <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
-            Our leadership combines theoretical physics, quantitative finance, and enterprise software engineering to resolve impossible strategic dilemmas.
+            {sectionHeadings.team.intro}
           </p>
         </div>
 

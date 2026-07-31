@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { Logo3D } from './Logo3D';
-import { NAVIGATION_DATA } from './navigationData';
 import { NavLink } from './NavLink';
 import { SearchModal } from './SearchModal';
 import { HeaderCTA } from './HeaderCTA';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
 import { soundEngine } from '../../utils/audio';
+import { useSanityContent } from '../../hooks/useSanityContent';
 
 interface Header3DProps {
   webGpuActive: boolean;
@@ -15,6 +15,7 @@ interface Header3DProps {
 }
 
 export const Header3D: React.FC<Header3DProps> = ({ webGpuActive, onOpenContact }) => {
+  const { navigation } = useSanityContent();
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(soundEngine.getMuted());
@@ -63,7 +64,7 @@ export const Header3D: React.FC<Header3DProps> = ({ webGpuActive, onOpenContact 
 
         {/* Main Desktop Navigation Items (Center) */}
         <nav className="hidden lg:flex items-center gap-7">
-          {NAVIGATION_DATA.map((item) => (
+          {navigation.map((item) => (
             <NavLink key={item.label} navItem={item} />
           ))}
         </nav>
@@ -90,7 +91,7 @@ export const Header3D: React.FC<Header3DProps> = ({ webGpuActive, onOpenContact 
         </div>
 
         {/* Mobile Hamburger Toggle & Drawer */}
-        <MobileMenuDrawer webGpuActive={webGpuActive} onOpenContact={onOpenContact} />
+        <MobileMenuDrawer navigation={navigation} webGpuActive={webGpuActive} onOpenContact={onOpenContact} />
       </div>
     </motion.header>
   );

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ContactFormData } from '../../types';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
+import { useSanityContent } from '../../hooks/useSanityContent';
 import { Mail, Send, CheckCircle2, Building2, User, Sparkles } from 'lucide-react';
 
 interface ContactSectionProps {
@@ -9,11 +10,12 @@ interface ContactSectionProps {
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) => {
+  const { contact } = useSanityContent();
   const [formData, setFormData] = useState<ContactFormData>({
     fullName: '',
     email: '',
     company: '',
-    serviceInterest: 'Quantum Enterprise Strategy',
+    serviceInterest: contact.serviceOptions[0] ?? 'Quantum Enterprise Strategy',
     budgetRange: '$100k - $250k',
     message: '',
   });
@@ -53,26 +55,26 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
           <ScrollReveal className="lg:col-span-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-4">
               <Mail className="w-3.5 h-3.5" />
-              Strategic Engagement Pipeline
+              {contact.sectionTag}
             </div>
 
             <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight leading-tight mb-6">
-              Initiate <br />
-              <span className="text-gradient-cyan">Transformation.</span>
+              {contact.headlineLine1} <br />
+              <span className="text-gradient-cyan">{contact.headlineLine2}</span>
             </h2>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-              Select your primary strategic focus area below. Our interactive 3D grid adjusts telemetry in real-time as you complete your brief.
+              {contact.intro}
             </p>
 
             <div className="space-y-4 font-mono text-xs text-slate-400">
               <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center gap-3">
                 <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>Response SLA: Within 4 Business Hours</span>
+                <span>{contact.slaNote}</span>
               </div>
               <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center gap-3">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>NDA & Bilateral Confidentiality Enforced</span>
+                <span>{contact.ndaNote}</span>
               </div>
             </div>
           </ScrollReveal>
@@ -87,7 +89,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-mono uppercase text-slate-300 mb-2">
-                        Full Name *
+                        {contact.fieldLabels.fullName}
                       </label>
                       <div className="relative">
                         <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
@@ -97,7 +99,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                           value={formData.fullName}
                           onFocus={handleInputFocus}
                           onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                          placeholder="Dr. Alexander Vance"
+                          placeholder={contact.placeholders.fullName}
                           className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/80 border border-white/10 text-slate-100 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
@@ -105,7 +107,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
 
                     <div>
                       <label className="block text-xs font-mono uppercase text-slate-300 mb-2">
-                        Work Email *
+                        {contact.fieldLabels.email}
                       </label>
                       <div className="relative">
                         <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
@@ -115,7 +117,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                           value={formData.email}
                           onFocus={handleInputFocus}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          placeholder="alexander@enterprise.com"
+                          placeholder={contact.placeholders.email}
                           className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/80 border border-white/10 text-slate-100 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
@@ -125,7 +127,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-mono uppercase text-slate-300 mb-2">
-                        Enterprise / Organization
+                        {contact.fieldLabels.company}
                       </label>
                       <div className="relative">
                         <Building2 className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
@@ -134,7 +136,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                           value={formData.company}
                           onFocus={handleInputFocus}
                           onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                          placeholder="Apex Global Corp"
+                          placeholder={contact.placeholders.company}
                           className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/80 border border-white/10 text-slate-100 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
@@ -142,7 +144,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
 
                     <div>
                       <label className="block text-xs font-mono uppercase text-slate-300 mb-2">
-                        Service Vector
+                        {contact.fieldLabels.serviceVector}
                       </label>
                       <select
                         value={formData.serviceInterest}
@@ -150,25 +152,23 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                         onChange={(e) => setFormData({ ...formData, serviceInterest: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 transition-all cursor-pointer"
                       >
-                        <option>Quantum Enterprise Strategy</option>
-                        <option>AI & Autonomous Neural Ops</option>
-                        <option>Capital & Value Creation</option>
-                        <option>Sovereign Supply Resilience</option>
-                        <option>Zero-Trust Infrastructure</option>
+                        {contact.serviceOptions.map((opt) => (
+                          <option key={opt}>{opt}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-mono uppercase text-slate-300 mb-2">
-                      Strategic Objective / Executive Brief
+                      {contact.fieldLabels.message}
                     </label>
                     <textarea
                       rows={4}
                       value={formData.message}
                       onFocus={handleInputFocus}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Outline key transformation milestones, constraints, or timelines..."
+                      placeholder={contact.placeholders.message}
                       className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-white/10 text-slate-100 text-sm placeholder:text-slate-600 focus:outline-none focus:border-cyan-400 transition-all"
                     />
                   </div>
@@ -179,10 +179,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                     className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 text-slate-950 font-syne font-bold text-sm uppercase tracking-wider hover:brightness-110 transition-all shadow-[0_0_25px_rgba(0,240,255,0.3)] cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
-                      <span className="animate-pulse">Transmitting Encrypted Brief...</span>
+                      <span className="animate-pulse">{contact.submittingLabel}</span>
                     ) : (
                       <>
-                        Submit Strategic Brief
+                        {contact.submitButton}
                         <Send className="w-4 h-4" />
                       </>
                     )}
@@ -197,11 +197,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                   </div>
 
                   <h3 className="font-syne font-bold text-2xl text-white mb-2">
-                    Transmission Acknowledged
+                    {contact.successTitle}
                   </h3>
 
                   <p className="text-slate-300 text-sm max-w-md mx-auto mb-8">
-                    Thank you, {formData.fullName}. Your engagement parameters have been routed to our Managing Partner desk. An advisory principal will respond within 4 business hours.
+                    {contact.successMessage.replace('{name}', formData.fullName)}
                   </p>
 
                   <button
@@ -211,14 +211,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ sectionRef }) =>
                         fullName: '',
                         email: '',
                         company: '',
-                        serviceInterest: 'Quantum Enterprise Strategy',
+                        serviceInterest: contact.serviceOptions[0] ?? 'Quantum Enterprise Strategy',
                         budgetRange: '$100k - $250k',
                         message: '',
                       });
                     }}
                     className="px-6 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 text-xs font-mono uppercase hover:text-white cursor-pointer"
                   >
-                    Submit Additional Brief
+                    {contact.additionalBriefLabel}
                   </button>
                 </div>
               )}

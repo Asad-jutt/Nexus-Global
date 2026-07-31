@@ -4,13 +4,24 @@ import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
 import { ScrollCounter } from '../Animations/ScrollCounter';
 import { Cpu, Sparkles, Briefcase, Heart, Factory, Code, Shield, Globe, ArrowUpRight } from 'lucide-react';
-import { ExpertiseModal, EXPERTISE_DETAILS } from '../ui/ExpertiseModal';
+import { ExpertiseModal } from '../ui/ExpertiseModal';
+import { useSanityContent } from '../../hooks/useSanityContent';
 
 interface AboutSectionProps {
   onOpenContact?: () => void;
 }
 
+const SECTOR_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  finance: Briefcase,
+  pharma: Heart,
+  manufacturing: Factory,
+  cloud: Code,
+  cyber: Shield,
+  global: Globe,
+};
+
 export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () => {} }) => {
+  const { about, expertise } = useSanityContent();
   const [activeExpertiseKey, setActiveExpertiseKey] = useState<string | null>(null);
 
   useEffect(() => {
@@ -18,7 +29,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () =
       const hash = window.location.hash;
       if (!hash.startsWith('#expertise-')) return;
       const key = hash.replace('#expertise-', '');
-      if (EXPERTISE_DETAILS[key]) {
+      if (expertise[key]) {
         setActiveExpertiseKey(key);
       }
     };
@@ -26,16 +37,14 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () =
     handleHash();
     window.addEventListener('hashchange', handleHash);
     return () => window.removeEventListener('hashchange', handleHash);
-  }, []);
+  }, [expertise]);
 
-  const sectors = [
-    { key: 'finance', label: 'Financial Services', icon: Briefcase, desc: 'Institutional risk & FinTech compliance' },
-    { key: 'pharma', label: 'Healthcare & Pharma', icon: Heart, desc: 'Clinical trials & MedTech privacy' },
-    { key: 'manufacturing', label: 'Global Manufacturing', icon: Factory, desc: 'Industry 4.0 & supply digital twins' },
-    { key: 'cloud', label: 'Enterprise Tech & Cloud', icon: Code, desc: 'Scalable microservices & WebGPU' },
-    { key: 'cyber', label: 'Risk & Cybersecurity', icon: Shield, desc: 'Zero-trust & post-quantum defense' },
-    { key: 'global', label: 'Global Expansion', icon: Globe, desc: 'International hubs & cross-border M&A' },
-  ];
+  const sectors = about.sectors.map((s) => ({
+    key: s.key,
+    label: s.label,
+    icon: SECTOR_ICONS[s.key] ?? Briefcase,
+    desc: s.desc,
+  }));
 
   return (
     <section id="about" className="relative py-28 bg-[#08090e] overflow-hidden border-t border-white/5">
@@ -57,16 +66,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () =
         <ScrollReveal className="max-w-3xl mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            Core Philosophy & System Mechanics
+            {about.sectionTag}
           </div>
 
           <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight leading-tight mb-6">
-            Conventional advisory diagnoses the past. <br />
-            <span className="text-gradient-emerald">We simulate the future.</span>
+            {about.headlineLine1} <br />
+            <span className="text-gradient-emerald">{about.headlineHighlight}</span>
           </h2>
 
           <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-            Market leadership in the decade ahead belongs to enterprises capable of calculating complex multi-variable futures in milliseconds. Nexus Global merges quantum strategic modeling with real-time operational execution.
+            {about.intro}
           </p>
         </ScrollReveal>
 
@@ -74,10 +83,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () =
         <div className="mb-16">
           <ScrollReveal className="flex items-center justify-between mb-6">
             <h3 className="font-syne font-bold text-xl text-white">
-              Specialized Industry & Capability Sectors
+              {about.selectorTitle}
             </h3>
             <span className="text-xs font-mono text-cyan-400">
-              Select Sector for Deep Dossier
+              {about.selectorHint}
             </span>
           </ScrollReveal>
 
@@ -125,33 +134,31 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () =
             </div>
             <div>
               <h4 className="font-syne font-bold text-lg text-white">
-                Real-Time Compute Simulation Pipeline
+                {about.computeTitle}
               </h4>
               <p className="text-slate-400 text-xs font-mono">
-                Running 10,000+ parallel strategic scenarios per enterprise engagement
+                {about.computeSubtitle}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-8 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-8 w-full md:w-auto justify-around">
-            <div>
-              <div className="font-syne font-extrabold text-2xl text-cyan-400">
-                <ScrollCounter endValue={18.4} prefix="$" suffix="B+" decimals={1} />
-              </div>
-              <div className="text-[11px] font-mono text-slate-400">Value Created</div>
-            </div>
-            <div>
-              <div className="font-syne font-extrabold text-2xl text-emerald-400">
-                <ScrollCounter endValue={99.98} suffix="%" decimals={2} />
-              </div>
-              <div className="text-[11px] font-mono text-slate-400">Model Accuracy</div>
-            </div>
-            <div>
-              <div className="font-syne font-extrabold text-2xl text-purple-400">
-                <ScrollCounter endValue={90} suffix=" Days" />
-              </div>
-              <div className="text-[11px] font-mono text-slate-400">Avg Deployment</div>
-            </div>
+            {about.computeMetrics.map((metric, idx) => {
+              const colors = ['text-cyan-400', 'text-emerald-400', 'text-purple-400'];
+              return (
+                <div key={idx}>
+                  <div className={`font-syne font-extrabold text-2xl ${colors[idx % colors.length]}`}>
+                    <ScrollCounter
+                      endValue={metric.value}
+                      prefix={metric.prefix}
+                      suffix={metric.suffix}
+                      decimals={metric.decimals ?? 0}
+                    />
+                  </div>
+                  <div className="text-[11px] font-mono text-slate-400">{metric.label}</div>
+                </div>
+              );
+            })}
           </div>
         </ScrollReveal>
 
@@ -160,6 +167,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () =
       {/* Expertise Sector Dossier Modal */}
       <ExpertiseModal
         expertiseKey={activeExpertiseKey}
+        expertise={expertise}
         onClose={() => setActiveExpertiseKey(null)}
         onOpenContact={onOpenContact}
       />

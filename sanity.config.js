@@ -13,32 +13,16 @@ export default defineConfig({
   title: "Nexus Global",
   projectId,
   dataset,
-  plugins: [
-    structureTool({
-      structure: (S) =>
-        S.list()
-          .title("Content")
-          .items([
-            ...singletonTypes
-              .keys()
-              .map((type) =>
-                S.documentListItem().id(type).schemaType(type).title(
-                  {
-                    siteSettings: "Site Settings",
-                    hero: "Hero",
-                    navigation: "Navigation",
-                    contactSettings: "Contact Settings",
-                    sectionHeadings: "Section Headings",
-                  }[type]
-                )
-              ),
-            S.divider(),
-            ...S.documentTypeListItems().filter((item) => !singletonTypes.has(item.getId())),
-          ]),
-    }),
-    visionTool(),
-  ],
+  plugins: [structureTool(), visionTool()],
   schema: {
     types: schemaTypes,
+  },
+  document: {
+    newDocumentOptions: (prev, { creationContext }) => {
+      if (creationContext.type === "global") {
+        return prev.filter((template) => !singletonTypes.has(template.templateId));
+      }
+      return prev;
+    },
   },
 });

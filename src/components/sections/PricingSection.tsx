@@ -2,76 +2,13 @@ import React, { useState } from 'react';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
+import { useSanityContent } from '../../hooks/useSanityContent';
+import type { TierContent } from '../../types';
 import { Check, Zap, Sparkles, ArrowRight } from 'lucide-react';
 
-interface Tier {
-  id: string;
-  name: string;
-  tagline: string;
-  price: string;
-  period: string;
-  popular?: boolean;
-  accentColor: string;
-  features: string[];
-  cta: string;
-}
-
-const TIERS: Tier[] = [
-  {
-    id: 'starter',
-    name: 'Diagnostic Assessment',
-    tagline: 'System Audit & OPEX Discovery',
-    price: '$10,000',
-    period: 'one-time engagement',
-    accentColor: '#00f0ff',
-    features: [
-      'Full telemetry sweep of legacy codebase & cloud setup',
-      'Architecture vulnerability & bottleneck matrix',
-      'AI & WebGPU feasibility report with 3-year ROI model',
-      '2 C-suite executive briefing sessions',
-      'Dedicated practice lead assignment',
-    ],
-    cta: 'Book Assessment',
-  },
-  {
-    id: 'transformation',
-    name: 'Enterprise Transformation',
-    tagline: 'Full Architecture Re-engineering',
-    price: '$50,000',
-    period: '/ month (min 6 months)',
-    popular: true,
-    accentColor: '#00ff9d',
-    features: [
-      'Dedicated squad of 5 Principal Architects & Engineers',
-      'Custom WebGL/WebGPU telemetry & analytics engine',
-      'Sub-millisecond data pipeline implementation',
-      'Zero-Downtime legacy ERP & CRM migration',
-      'Quantum-safe encryption baseline deployment',
-      '24/7 SLA with 15-minute escalation guarantee',
-      'Weekly executive governance steering committee',
-    ],
-    cta: 'Initiate Transformation',
-  },
-  {
-    id: 'sovereign',
-    name: 'Sovereign Enterprise',
-    tagline: 'Custom Defense & Sovereign Multi-Cloud',
-    price: 'Custom',
-    period: 'tailored annual retainer',
-    accentColor: '#a855f7',
-    features: [
-      'Fully isolated air-gapped compute & data topologies',
-      'Custom LLM/SLM fine-tuning inside trust boundary',
-      'On-premise WebGPU compute cluster deployment',
-      'Bespoke threat intelligence & zero-trust posture',
-      'Board-level strategic advisory & lobbyist alignment',
-      'Unlimited dedicated engineering squad scaling',
-    ],
-    cta: 'Contact Sovereign Desk',
-  },
-];
-
 export const PricingSection: React.FC = () => {
+  const { tiers, sectionHeadings } = useSanityContent();
+  const TIERS: TierContent[] = tiers;
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
 
   return (
@@ -82,13 +19,13 @@ export const PricingSection: React.FC = () => {
         <ScrollReveal className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
             <Zap className="w-3.5 h-3.5" />
-            Advisory & Engineering Packages
+            {sectionHeadings.pricing.tag}
           </div>
           <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight">
-            Transparent Strategic Commitments
+            {sectionHeadings.pricing.title}
           </h2>
           <p className="text-slate-400 text-sm mt-3">
-            Predictable capital allocation backed by audited performance milestones and C-suite SLAs.
+            {sectionHeadings.pricing.intro}
           </p>
         </ScrollReveal>
 

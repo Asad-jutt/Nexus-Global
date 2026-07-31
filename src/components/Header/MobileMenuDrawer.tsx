@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Volume2, VolumeX, Sparkles, ArrowUpRight } from 'lucide-react';
-import { NAVIGATION_DATA, NavItemData } from './navigationData';
+import type { NavItemData } from './navigationData';
 import { soundEngine } from '../../utils/audio';
 
 interface MobileMenuDrawerProps {
+  navigation: NavItemData[];
   webGpuActive: boolean;
   onOpenContact: () => void;
 }
 
-export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({ webGpuActive, onOpenContact }) => {
+export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({ navigation: NAVIGATION_DATA, webGpuActive, onOpenContact }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(soundEngine.getMuted());

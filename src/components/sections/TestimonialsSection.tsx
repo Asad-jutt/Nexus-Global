@@ -3,57 +3,13 @@ import * as THREE from 'three';
 import { Canvas3D } from '../3d/Canvas3D';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
+import { useSanityContent } from '../../hooks/useSanityContent';
+import type { TestimonialContent } from '../../types';
 import { Quote, ChevronLeft, ChevronRight, Star, Shield } from 'lucide-react';
 
-interface Testimonial {
-  id: string;
-  quote: string;
-  author: string;
-  title: string;
-  company: string;
-  rating: number;
-  impact: string;
-  avatar: string;
-  accentColor: string;
-}
-
-const TESTIMONIALS_DATA: Testimonial[] = [
-  {
-    id: '1',
-    quote: 'Nexus Global redefined our enterprise data layer in 6 months. Their WebGPU telemetry stack reduced our operational latency by 82% and saved us $42M in cloud overhead.',
-    author: 'Victoria Sterling',
-    title: 'Chief Financial Officer',
-    company: 'Apex Sovereign Wealth',
-    rating: 5,
-    impact: '$42M Annual OPEX Saved',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-    accentColor: '#00f0ff',
-  },
-  {
-    id: '2',
-    quote: 'When migrating our core supply chain algorithms to real-time predictive models, Nexus delivered flawless execution. Outstanding strategic clarity and engineering precision.',
-    author: 'David Chen',
-    title: 'Chief Executive Officer',
-    company: 'Hyperion Logistics Group',
-    rating: 5,
-    impact: '82% Latency Reduction',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-    accentColor: '#00ff9d',
-  },
-  {
-    id: '3',
-    quote: 'The single best strategic advisory investment we made this decade. They transformed our legacy ERP into an autonomous decision engine with 99.99% uptime.',
-    author: 'Elena Rostova',
-    title: 'Chief Operating Officer',
-    company: 'AeroSpace Prime Defense',
-    rating: 5,
-    impact: '99.99% Autonomous Uptime',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80',
-    accentColor: '#a855f7',
-  },
-];
-
 export const TestimonialsSection: React.FC = () => {
+  const { testimonials, sectionHeadings } = useSanityContent();
+  const TESTIMONIALS_DATA: TestimonialContent[] = testimonials;
   const [currentIndex, setCurrentIndex] = useState(0);
   const activeTestimonial = TESTIMONIALS_DATA[currentIndex];
 
@@ -114,10 +70,10 @@ export const TestimonialsSection: React.FC = () => {
         <ScrollReveal className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
             <Shield className="w-3.5 h-3.5" />
-            Executive Testimonials
+            {sectionHeadings.testimonials.tag}
           </div>
           <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight">
-            Validated by Global C-Suite Leaders
+            {sectionHeadings.testimonials.title}
           </h2>
         </ScrollReveal>
 

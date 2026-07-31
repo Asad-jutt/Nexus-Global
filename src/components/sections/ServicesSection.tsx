@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { SERVICES_DATA } from '../../data/consultancyData';
 import { ServiceItem } from '../../types';
 import { MiniCard3D } from '../3d/MiniCard3D';
 import { ServiceModal } from '../ui/ServiceModal';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
+import { useSanityContent } from '../../hooks/useSanityContent';
 import { Layers, ArrowUpRight, Filter } from 'lucide-react';
 
 interface ServicesSectionProps {
@@ -13,11 +13,15 @@ interface ServicesSectionProps {
 }
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact }) => {
+  const { services, sectionHeadings } = useSanityContent();
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
-  const categories = ['All', 'Strategy & Growth', 'Technology & AI', 'Finance & M&A', 'Operations', 'Cyber & Infrastructure'];
+  const categories = [
+    'All',
+    ...Array.from(new Set(services.flatMap((s) => (s.categories && s.categories.length > 0 ? s.categories : [s.category])))),
+  ];
 
   useEffect(() => {
     const handleHash = () => {
@@ -25,14 +29,17 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
       if (!hash.startsWith('#services-')) return;
 
       const sub = hash.replace('#services-', '');
-      if (sub === 'strategy') {
-        setActiveCategory('Strategy & Growth');
-      } else if (sub === 'tech' || sub === 'ai') {
-        setActiveCategory('Technology & AI');
-      } else if (sub === 'ops') {
-        setActiveCategory('Operations');
-      } else if (sub === 'change' || sub === 'finance') {
-        setActiveCategory('Finance & M&A');
+      const aliasMap: Record<string, string> = {
+        strategy: 'Strategy & Growth',
+        tech: 'Technology & AI',
+        ai: 'Technology & AI',
+        ops: 'Operations',
+        change: 'Finance & M&A',
+        finance: 'Finance & M&A',
+      };
+      const resolved = aliasMap[sub];
+      if (resolved && categories.includes(resolved)) {
+        setActiveCategory(resolved);
       }
     };
 
@@ -42,8 +49,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
   }, []);
 
   const filteredServices = activeCategory === 'All'
-    ? SERVICES_DATA
-    : SERVICES_DATA.filter((s) =>
+    ? services
+    : services.filter((s) =>
         s.category.toLowerCase().trim() === activeCategory.toLowerCase().trim() ||
         (s.categories && s.categories.some((c) => c.toLowerCase().trim() === activeCategory.toLowerCase().trim()))
       );
@@ -64,15 +71,15 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
               <Layers className="w-3.5 h-3.5" />
-              Strategic Practice Areas
+              {sectionHeadings.services.tag}
             </div>
             <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight">
-              3D Practice Matrix
+              {sectionHeadings.services.title}
             </h2>
           </div>
 
           <p className="text-slate-400 text-sm max-w-md">
-            Hover over any practice module to activate its interactive 3D spatial preview. Click for deep-dive execution protocols.
+            {sectionHeadings.services.intro}
           </p>
         </ScrollReveal>
 

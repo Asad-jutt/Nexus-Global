@@ -2,82 +2,14 @@ import React, { useState } from 'react';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
+import { useSanityContent } from '../../hooks/useSanityContent';
+import type { ArticleContent } from '../../types';
 import { BookOpen, ArrowUpRight, Clock, X, Share2, Check } from 'lucide-react';
 
-interface Article {
-  id: string;
-  title: string;
-  category: string;
-  readTime: string;
-  date: string;
-  summary: string;
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-  };
-  content: string[];
-}
-
-const ARTICLES_DATA: Article[] = [
-  {
-    id: 'ai-enterprise-transformation',
-    title: 'The Sovereign AI Architecture: Beyond LLM Wrapping in Enterprise Operations',
-    category: 'AI & Engineering',
-    readTime: '6 min read',
-    date: 'July 2026',
-    summary: 'Why reliance on high-latency third-party APIs creates strategic fragility, and how custom compute pipelines deliver 10x ROI.',
-    author: {
-      name: 'Dr. Evelyn Vance',
-      role: 'Chief AI Architect',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
-    },
-    content: [
-      'In 2026, the artificial intelligence landscape experienced a fundamental paradigm shift. Simple API wrappers and prompt engineering hacks reached their utility ceiling, giving way to sovereign model architectures running inside enterprise trust boundaries.',
-      'To achieve zero-latency decision intelligence, forward-thinking enterprises are deploying WebGPU and custom compute topologies directly alongside operational databases.',
-      'Our recent benchmark across 40 enterprise migrations revealed a 78% reduction in inference cost and a 12x speedup in real-time document tokenization when moving from cloud API polling to edge-accelerated micro-models.',
-    ],
-  },
-  {
-    id: 'resilient-supply-chains',
-    title: 'Quant-Driven Supply Resilience in High-Volatility Geo-Political Climes',
-    category: 'Operations',
-    readTime: '8 min read',
-    date: 'June 2026',
-    summary: 'Deploying Monte Carlo simulation clusters to predict global maritime bottlenecks 30 days ahead of market movement.',
-    author: {
-      name: 'Marcus Sterling',
-      role: 'Managing Partner',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80',
-    },
-    content: [
-      'Global supply networks have entered an era of perpetual disruption. Traditional deterministic forecasting models fail when non-linear events trigger cascade failures across logistics hubs.',
-      'By coupling WebGL-accelerated 3D spatial mapping with real-time AIS vessel telemetry, our advisory team created an autonomous dynamic routing engine capable of evaluating 100,000 supply paths per second.',
-      'Clients implementing this real-time rerouting matrix preserved 94% of on-time delivery metrics during Q1 supply chain bottlenecks.',
-    ],
-  },
-  {
-    id: 'quantum-safe-cybersecurity',
-    title: 'Post-Quantum Cryptography: Preparing Enterprise Storage for Y2Q',
-    category: 'Strategy & Security',
-    readTime: '5 min read',
-    date: 'May 2026',
-    summary: 'A strategic roadmap for migrating legacy RSA/ECC encryption schemes to lattice-based NIST post-quantum primitives.',
-    author: {
-      name: 'Kenji Takahashi',
-      role: 'Head of Cyber Strategy',
-      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80',
-    },
-    content: [
-      'The transition to post-quantum cryptography is no longer a theoretical exercise. Adversaries actively execute "Store Now, Decrypt Later" strategy on encrypted communications.',
-      'Our team assists chief security officers in conducting automated cryptographic asset inventories and executing zero-downtime key rotation policies.',
-      'Discover how lattice-based cryptography can be integrated into high-throughput API gateways without compromising sub-millisecond response SLA guarantees.',
-    ],
-  },
-];
-
 export const InsightsSection: React.FC = () => {
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const { articles, sectionHeadings } = useSanityContent();
+  const ARTICLES_DATA: ArticleContent[] = articles;
+  const [selectedArticle, setSelectedArticle] = useState<ArticleContent | null>(null);
   const [copied, setCopied] = useState(false);
 
   return (
@@ -89,14 +21,14 @@ export const InsightsSection: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
               <BookOpen className="w-3.5 h-3.5" />
-              Thought Leadership & Research
+              {sectionHeadings.insights.tag}
             </div>
             <h2 className="font-syne font-extrabold text-3xl sm:text-5xl text-white tracking-tight">
-              Frontier Insights & Whitepapers
+              {sectionHeadings.insights.title}
             </h2>
           </div>
           <p className="text-slate-400 text-sm max-w-md">
-            Rigorous analysis, architectural blueprints, and quantitative intelligence published by our practice leads.
+            {sectionHeadings.insights.intro}
           </p>
         </ScrollReveal>
 
