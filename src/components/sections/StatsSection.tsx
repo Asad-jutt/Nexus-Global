@@ -1,6 +1,4 @@
 import React from 'react';
-import * as THREE from 'three';
-import { Canvas3D } from '../3d/Canvas3D';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
@@ -96,53 +94,45 @@ export const StatsSection: React.FC = () => {
                     {stat.icon}
                   </div>
 
-                  {/* Mini 3D Geometry Preview */}
-                  <div className="w-16 h-16 relative">
-                    <Canvas3D
-                      interactive={false}
-                      onSceneReady={({ scene, camera }) => {
-                        camera.position.set(0, 0, 3.5);
-
-                        const ambient = new THREE.AmbientLight(0xffffff, 1.5);
-                        scene.add(ambient);
-
-                        const light = new THREE.DirectionalLight(stat.accentColor, 3.0);
-                        light.position.set(2, 2, 2);
-                        scene.add(light);
-
-                        let geom: THREE.BufferGeometry;
-                        if (stat.shape === 'torus') geom = new THREE.TorusGeometry(0.8, 0.3, 16, 32);
-                        else if (stat.shape === 'cylinder') geom = new THREE.CylinderGeometry(0.7, 0.7, 1.2, 16);
-                        else if (stat.shape === 'octahedron') geom = new THREE.OctahedronGeometry(0.9, 0);
-                        else geom = new THREE.SphereGeometry(0.8, 16, 16);
-
-                        const mat = new THREE.MeshPhysicalMaterial({
-                          color: new THREE.Color(stat.accentColor),
-                          metalness: 0.8,
-                          roughness: 0.2,
-                          wireframe: true,
-                          transparent: true,
-                          opacity: 0.85,
-                        });
-
-                        const mesh = new THREE.Mesh(geom, mat);
-                        scene.add(mesh);
-
-                        let frameId: number;
-                        const animate = () => {
-                          frameId = requestAnimationFrame(animate);
-                          mesh.rotation.x += 0.01;
-                          mesh.rotation.y += 0.015;
-                        };
-                        animate();
-
-                        return () => {
-                          cancelAnimationFrame(frameId);
-                          geom.dispose();
-                          mat.dispose();
-                        };
-                      }}
-                    />
+                  {/* Mini 3D Geometry Preview - Vector SVG Wireframe */}
+                  <div className="w-12 h-12 relative flex items-center justify-center p-1.5 rounded-xl bg-slate-900/60 border border-white/5 group-hover:border-white/20 transition-all">
+                    <svg
+                      viewBox="0 0 64 64"
+                      className="w-full h-full group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 ease-out"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      {stat.shape === 'torus' && (
+                        <g>
+                          <ellipse cx="32" cy="32" rx="22" ry="12" stroke={stat.accentColor} strokeWidth="1.5" strokeDasharray="3 2" opacity="0.8" />
+                          <ellipse cx="32" cy="32" rx="12" ry="6" stroke={stat.accentColor} strokeWidth="1.5" opacity="0.9" />
+                          <path d="M10 32 C10 44, 54 44, 54 32" stroke={stat.accentColor} strokeWidth="1" strokeDasharray="2 2" opacity="0.5" />
+                        </g>
+                      )}
+                      {stat.shape === 'cylinder' && (
+                        <g>
+                          <ellipse cx="32" cy="16" rx="18" ry="7" stroke={stat.accentColor} strokeWidth="1.5" />
+                          <ellipse cx="32" cy="48" rx="18" ry="7" stroke={stat.accentColor} strokeWidth="1.5" />
+                          <line x1="14" y1="16" x2="14" y2="48" stroke={stat.accentColor} strokeWidth="1.5" />
+                          <line x1="50" y1="16" x2="50" y2="48" stroke={stat.accentColor} strokeWidth="1.5" />
+                          <line x1="32" y1="23" x2="32" y2="41" stroke="#ffffff" strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
+                        </g>
+                      )}
+                      {stat.shape === 'octahedron' && (
+                        <g>
+                          <path d="M32 8 L52 32 L32 56 L12 32 Z" stroke={stat.accentColor} strokeWidth="1.5" fill={stat.accentColor} fillOpacity="0.15" />
+                          <line x1="12" y1="32" x2="52" y2="32" stroke={stat.accentColor} strokeWidth="1" strokeDasharray="2 2" />
+                          <line x1="32" y1="8" x2="32" y2="56" stroke="#ffffff" strokeWidth="1" opacity="0.7" />
+                        </g>
+                      )}
+                      {stat.shape === 'sphere' && (
+                        <g>
+                          <circle cx="32" cy="32" r="20" stroke={stat.accentColor} strokeWidth="1.5" fill={stat.accentColor} fillOpacity="0.1" />
+                          <ellipse cx="32" cy="32" rx="20" ry="8" stroke={stat.accentColor} strokeWidth="1" strokeDasharray="2 2" opacity="0.7" />
+                          <ellipse cx="32" cy="32" rx="8" ry="20" stroke={stat.accentColor} strokeWidth="1" strokeDasharray="2 2" opacity="0.7" />
+                        </g>
+                      )}
+                    </svg>
                   </div>
                 </div>
 

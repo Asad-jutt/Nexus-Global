@@ -33,6 +33,9 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
     const container = containerRef.current;
     const canvas = canvasRef.current;
 
+    let isVisible = true;
+    let animationFrameId: number | null = null;
+
     // Detect WebGPU / WebGL support
     detectWebGPU().then(() => {
       // Create Three.js Scene
@@ -44,10 +47,10 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
       const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
       camera.position.set(0, 0, 8);
 
-      // Determine pixel ratio cap based on quality preset
-      let maxDpr = 2.0;
-      if (qualityPreset === 'balanced') maxDpr = 1.5;
-      if (qualityPreset === 'saver') maxDpr = 1.0;
+      // Determine pixel ratio cap based on quality preset for performance
+      let maxDpr = 1.25;
+      if (qualityPreset === 'balanced') maxDpr = 1.0;
+      if (qualityPreset === 'saver') maxDpr = 0.85;
 
       const pixelRatio = Math.min(window.devicePixelRatio || 1, maxDpr);
 
@@ -56,7 +59,7 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
         canvas,
         alpha: true,
         antialias: qualityPreset !== 'saver',
-        powerPreference: qualityPreset === 'high' ? 'high-performance' : 'default',
+        powerPreference: qualityPreset === 'high' ? 'high-performance' : 'low-power',
       });
 
       renderer.setSize(width, height);
@@ -70,7 +73,7 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
       const targetMouse = new THREE.Vector2(0, 0);
 
       const handleMouseMove = (event: MouseEvent) => {
-        if (!interactive) return;
+        if (!interactive || !isVisible) return;
         const rect = container.getBoundingClientRect();
         const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         const y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
@@ -78,7 +81,7 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
       };
 
       const handleTouchMove = (event: TouchEvent) => {
-        if (!interactive || event.touches.length === 0) return;
+        if (!interactive || !isVisible || event.touches.length === 0) return;
         const touch = event.touches[0];
         const rect = container.getBoundingClientRect();
         const x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
@@ -110,12 +113,12 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
       resizeObserver.observe(container);
 
       // Render & Performance loop
-      let animationFrameId: number;
       let lastTime = performance.now();
       let frameCount = 0;
       let fpsTimer = performance.now();
 
       const animate = (currentTime: number) => {
+        if (!isVisible) return;
         animationFrameId = requestAnimationFrame(animate);
 
         const delta = (currentTime - lastTime) / 1000;
@@ -130,7 +133,7 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
 
         // Performance metrics calculation
         frameCount++;
-        if (currentTime - fpsTimer >= 500) { // update twice per second
+        if (currentTime - fpsTimer >= 500) {
           const currentFps = Math.round((frameCount * 1000) / (currentTime - fpsTimer));
           const frameTime = delta * 1000;
           const info = renderer.info;
@@ -149,12 +152,33 @@ export const Canvas3D: React.FC<Canvas3DProps> = ({
         }
       };
 
+      // Intersection Observer to pause rendering when canvas is off-screen
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          const wasVisible = isVisible;
+          isVisible = entry.isIntersecting;
+
+          if (isVisible && !wasVisible) {
+            lastTime = performance.now();
+            animationFrameId = requestAnimationFrame(animate);
+          } else if (!isVisible && animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+        },
+        { rootMargin: '100px' }
+      );
+      intersectionObserver.observe(container);
+
+      // Start initial render loop if visible
       animationFrameId = requestAnimationFrame(animate);
 
       // Main component cleanup
       return () => {
-        cancelAnimationFrame(animationFrameId);
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
         resizeObserver.disconnect();
+        intersectionObserver.disconnect();
         if (interactive) {
           window.removeEventListener('mousemove', handleMouseMove);
           window.removeEventListener('touchmove', handleTouchMove);

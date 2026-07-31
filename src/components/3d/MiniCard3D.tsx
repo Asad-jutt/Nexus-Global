@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import React from 'react';
 import { GeometryType } from '../../types';
 
 interface MiniCard3DProps {
@@ -9,118 +8,81 @@ interface MiniCard3DProps {
 }
 
 export const MiniCard3D: React.FC<MiniCard3DProps> = ({ shape, colorHex, isHovered }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current || !canvasRef.current) return;
-
-    const container = containerRef.current;
-    const canvas = canvasRef.current;
-
-    const width = container.clientWidth || 120;
-    const height = container.clientHeight || 120;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
-    camera.position.set(0, 0, 4.5);
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true,
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-
-    // Create Mesh based on shape
-    let geom: THREE.BufferGeometry;
-    switch (shape) {
-      case 'prism':
-        geom = new THREE.CylinderGeometry(0, 1.0, 1.4, 4);
-        break;
-      case 'cube':
-      default:
-        geom = new THREE.BoxGeometry(1.2, 1.2, 1.2);
-        break;
-    }
-
-    const baseColor = new THREE.Color(colorHex);
-    const mat = new THREE.MeshPhysicalMaterial({
-      color: baseColor,
-      metalness: 0.8,
-      roughness: 0.2,
-      wireframe: false,
-      transparent: true,
-      opacity: 0.85,
-    });
-
-    const mesh = new THREE.Mesh(geom, mat);
-    scene.add(mesh);
-
-    // Wireframe outline
-    const wireGeom = new THREE.WireframeGeometry(geom);
-    const wireMat = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.4,
-    });
-    const wireMesh = new THREE.LineSegments(wireGeom, wireMat);
-    scene.add(wireMesh);
-
-    // Lighting
-    const light1 = new THREE.DirectionalLight(0xffffff, 2.5);
-    light1.position.set(2, 3, 4);
-    scene.add(light1);
-
-    const light2 = new THREE.DirectionalLight(baseColor, 2.0);
-    light2.position.set(-2, -2, -2);
-    scene.add(light2);
-
-    let animationFrameId: number;
-    let rotationSpeed = 0.01;
-
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-
-      // Increase rotation speed on hover
-      const targetSpeed = isHovered ? 0.04 : 0.01;
-      rotationSpeed += (targetSpeed - rotationSpeed) * 0.1;
-
-      mesh.rotation.x += rotationSpeed * 0.7;
-      mesh.rotation.y += rotationSpeed;
-      wireMesh.rotation.x = mesh.rotation.x;
-      wireMesh.rotation.y = mesh.rotation.y;
-
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    const resizeObserver = new ResizeObserver(() => {
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      if (w === 0 || h === 0) return;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    });
-    resizeObserver.observe(container);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
-      geom.dispose();
-      mat.dispose();
-      wireGeom.dispose();
-      wireMat.dispose();
-      renderer.dispose();
-    };
-  }, [shape, colorHex, isHovered]);
-
   return (
-    <div ref={containerRef} className="w-20 h-20 relative flex items-center justify-center">
-      <canvas ref={canvasRef} className="w-full h-full block" />
+    <div className="w-14 h-14 relative flex items-center justify-center p-2 rounded-xl bg-slate-900/80 border border-white/10 overflow-hidden group-hover:border-cyan-400/40 transition-all duration-300">
+      {/* Background radial glow */}
+      <div
+        className="absolute inset-0 opacity-20 blur-md transition-opacity duration-300"
+        style={{ backgroundColor: colorHex }}
+      />
+
+      <svg
+        viewBox="0 0 64 64"
+        className={`w-full h-full relative z-10 transition-transform duration-500 ease-out ${
+          isHovered ? 'scale-110 rotate-6' : 'scale-100 rotate-0'
+        }`}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {shape === 'prism' ? (
+          // Isometric 3D Pyramid / Prism
+          <g>
+            {/* Top apex to base faces */}
+            <path
+              d="M32 8 L12 44 L32 54 Z"
+              fill={colorHex}
+              fillOpacity={isHovered ? '0.45' : '0.25'}
+              stroke={colorHex}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M32 8 L52 44 L32 54 Z"
+              fill={colorHex}
+              fillOpacity={isHovered ? '0.25' : '0.15'}
+              stroke={colorHex}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            {/* Internal Wireframe Lines */}
+            <path d="M32 8 L32 54" stroke="#ffffff" strokeOpacity="0.6" strokeWidth="1" strokeDasharray="2 2" />
+            <path d="M12 44 L52 44" stroke={colorHex} strokeWidth="1.5" strokeLinejoin="round" />
+          </g>
+        ) : (
+          // Isometric 3D Cube / Matrix Box
+          <g>
+            {/* Top Face */}
+            <path
+              d="M32 10 L52 20 L32 30 L12 20 Z"
+              fill={colorHex}
+              fillOpacity={isHovered ? '0.5' : '0.3'}
+              stroke={colorHex}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            {/* Left Face */}
+            <path
+              d="M12 20 L32 30 L32 52 L12 42 Z"
+              fill={colorHex}
+              fillOpacity={isHovered ? '0.3' : '0.18'}
+              stroke={colorHex}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            {/* Right Face */}
+            <path
+              d="M32 30 L52 20 L52 42 L32 52 Z"
+              fill={colorHex}
+              fillOpacity={isHovered ? '0.2' : '0.1'}
+              stroke={colorHex}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            {/* Inner Glowing Core */}
+            <circle cx="32" cy="31" r="3" fill="#ffffff" fillOpacity="0.8" />
+          </g>
+        )}
+      </svg>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { CORE_PILLARS } from '../../data/consultancyData';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
 import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
@@ -117,31 +116,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenContact = () =
           </ScrollStaggerContainer>
         </div>
 
-        {/* Core Pillars Grid */}
-        <ScrollStaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {CORE_PILLARS.map((pillar) => (
-            <ScrollStaggerItem key={pillar.code}>
-              <div
-                onMouseEnter={() => soundEngine.playHover()}
-                className="glass-panel p-8 rounded-2xl border border-white/10 hover:border-cyan-400/40 transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden h-full"
-              >
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all" />
-
-                <div className="font-mono text-cyan-400 font-bold text-sm mb-4 tracking-widest">
-                  [{pillar.code}]
-                </div>
-
-                <h3 className="font-syne font-bold text-xl text-white mb-3 group-hover:text-cyan-300 transition-colors">
-                  {pillar.title}
-                </h3>
-
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  {pillar.description}
-                </p>
-              </div>
-            </ScrollStaggerItem>
-          ))}
-        </ScrollStaggerContainer>
 
         {/* Quant Metric Banner */}
         <ScrollReveal delay={0.2} className="mt-16 p-8 rounded-2xl glass-panel border border-cyan-500/30 flex flex-col md:flex-row items-center justify-between gap-8 bg-gradient-to-r from-slate-900/90 via-cyan-950/20 to-slate-900/90">

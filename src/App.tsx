@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { Header } from './components/ui/Header';
 import { PerformanceMonitor } from './components/ui/PerformanceMonitor';
 import { HeroSection } from './components/sections/HeroSection';
@@ -15,6 +15,20 @@ import { ContactSection } from './components/sections/ContactSection';
 import { Footer } from './components/sections/Footer';
 import { PerformanceStats, QualityPreset } from './types';
 import { detectWebGPU } from './utils/webgpu';
+
+const MemoHeader = memo(Header);
+const MemoHeroSection = memo(HeroSection);
+const MemoAboutSection = memo(AboutSection);
+const MemoStatsSection = memo(StatsSection);
+const MemoServicesSection = memo(ServicesSection);
+const MemoProcessSection = memo(ProcessSection);
+const MemoCaseStudiesSection = memo(CaseStudiesSection);
+const MemoInsightsSection = memo(InsightsSection);
+const MemoTestimonialsSection = memo(TestimonialsSection);
+const MemoTeamSection = memo(TeamSection);
+const MemoPricingSection = memo(PricingSection);
+const MemoContactSection = memo(ContactSection);
+const MemoFooter = memo(Footer);
 
 export default function App() {
   const [stats, setStats] = useState<PerformanceStats>({
@@ -39,71 +53,74 @@ export default function App() {
     });
   }, []);
 
-  const handleFpsUpdate = (fps: number, frameTimeMs: number, drawCalls: number, triangles: number) => {
-    setStats((prev) => ({
-      ...prev,
-      fps,
-      frameTimeMs,
-      drawCalls,
-      triangles,
-    }));
-  };
+  const handleFpsUpdate = useCallback((fps: number, frameTimeMs: number, drawCalls: number, triangles: number) => {
+    setStats((prev) => {
+      if (prev.fps === fps && Math.abs(prev.frameTimeMs - frameTimeMs) < 1) return prev;
+      return {
+        ...prev,
+        fps,
+        frameTimeMs,
+        drawCalls,
+        triangles,
+      };
+    });
+  }, []);
 
-  const handlePresetChange = (preset: QualityPreset) => {
+  const handlePresetChange = useCallback((preset: QualityPreset) => {
     setStats((prev) => ({
       ...prev,
       qualityPreset: preset,
     }));
-  };
+  }, []);
 
-  const handleOpenContact = () => {
+  const handleOpenContact = useCallback(() => {
     const contactElem = document.getElementById('contact');
     if (contactElem) {
       contactElem.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-[#08090e] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden">
       {/* Navigation Bar */}
-      <Header
+      <MemoHeader
         webGpuActive={stats.webGpuSupported}
         onOpenContact={handleOpenContact}
       />
 
       {/* Main Sections */}
       <main>
-        <HeroSection
+        <MemoHeroSection
           onOpenContact={handleOpenContact}
           onFpsUpdate={handleFpsUpdate}
           qualityPreset={stats.qualityPreset}
         />
 
-        <AboutSection onOpenContact={handleOpenContact} />
+        <MemoAboutSection onOpenContact={handleOpenContact} />
 
         <div id="metrics">
-          <StatsSection />
+          <MemoStatsSection />
         </div>
 
-        <ServicesSection onOpenContact={handleOpenContact} />
+        <MemoServicesSection onOpenContact={handleOpenContact} />
 
-        <ProcessSection />
+        <MemoProcessSection />
 
-        <CaseStudiesSection onOpenContact={handleOpenContact} />
+        <MemoCaseStudiesSection onOpenContact={handleOpenContact} />
 
-        <InsightsSection />
+        <MemoInsightsSection />
 
-        <TestimonialsSection />
+        <MemoTestimonialsSection />
 
-        <TeamSection />
+        <MemoTeamSection />
 
-        <PricingSection />
+        <MemoPricingSection />
 
-        <ContactSection sectionRef={contactSectionRef} />
+        <MemoContactSection sectionRef={contactSectionRef} />
       </main>
 
       {/* Footer */}
-      <Footer />
+      <MemoFooter />
 
       {/* Real-time GPU & Frame Telemetry HUD */}
       <PerformanceMonitor

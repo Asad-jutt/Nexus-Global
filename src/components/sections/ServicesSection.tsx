@@ -27,19 +27,19 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
       const sub = hash.replace('#services-', '');
       if (sub === 'strategy') {
         setActiveCategory('Strategy & Growth');
-        const s = SERVICES_DATA.find((x) => x.id === 'strategy-growth');
+        const s = SERVICES_DATA.find((x) => x.id === 'quantum-strategy');
         if (s) setSelectedService(s);
       } else if (sub === 'tech' || sub === 'ai') {
         setActiveCategory('Technology & AI');
-        const s = SERVICES_DATA.find((x) => x.id === 'ai-engineering');
+        const s = SERVICES_DATA.find((x) => x.id === 'ai-transformation');
         if (s) setSelectedService(s);
       } else if (sub === 'ops') {
         setActiveCategory('Operations');
-        const s = SERVICES_DATA.find((x) => x.id === 'ops-supply-chain');
+        const s = SERVICES_DATA.find((x) => x.id === 'cyber-sovereignty');
         if (s) setSelectedService(s);
       } else if (sub === 'change') {
         setActiveCategory('All');
-        const s = SERVICES_DATA.find((x) => x.id === 'finance-ma');
+        const s = SERVICES_DATA.find((x) => x.id === 'capital-allocation');
         if (s) setSelectedService(s);
       }
     };
@@ -51,7 +51,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
 
   const filteredServices = activeCategory === 'All'
     ? SERVICES_DATA
-    : SERVICES_DATA.filter((s) => s.category === activeCategory);
+    : SERVICES_DATA.filter((s) =>
+        s.category === activeCategory ||
+        (s.categories && s.categories.includes(activeCategory))
+      );
 
   return (
     <section id="services" className="relative py-28 bg-[#08090e] border-t border-white/5">
@@ -102,8 +105,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
           ))}
         </ScrollReveal>
 
-        {/* Service Cards Grid */}
-        <ScrollStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Service Cards Grid - 4 Columns Layout */}
+        <ScrollStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredServices.map((service) => {
             const isHovered = hoveredCardId === service.id;
 

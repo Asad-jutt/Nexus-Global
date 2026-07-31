@@ -21,7 +21,7 @@ const TIERS: Tier[] = [
     id: 'starter',
     name: 'Diagnostic Assessment',
     tagline: 'System Audit & OPEX Discovery',
-    price: '$25,000',
+    price: '$10,000',
     period: 'one-time engagement',
     accentColor: '#00f0ff',
     features: [
@@ -37,7 +37,7 @@ const TIERS: Tier[] = [
     id: 'transformation',
     name: 'Enterprise Transformation',
     tagline: 'Full Architecture Re-engineering',
-    price: '$120,000',
+    price: '$50,000',
     period: '/ month (min 6 months)',
     popular: true,
     accentColor: '#00ff9d',

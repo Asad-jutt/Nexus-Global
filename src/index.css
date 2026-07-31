@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Montserrat', sans-serif;
+  --font-syne: 'Montserrat', sans-serif;
+  --font-mono: 'Montserrat', sans-serif;
+}
+
 @layer base {
+  body, h1, h2, h3, h4, h5, h6, code, .font-syne, .font-mono, .font-sans {
+    font-family: 'Montserrat', sans-serif !important;
+  }
+
   body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: #08090e;
     color: #f1f5f9;
-  }
-
-  h1, h2, h3, h4, .font-syne {
-    font-family: 'Syne', sans-serif;
-  }
-
-  code, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
   }
 }
 

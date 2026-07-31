@@ -99,18 +99,19 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenCo
                 dataVizRef.current = viz;
 
                 let clock = new THREE.Clock();
+                let frameId: number;
 
                 const animate = () => {
+                  frameId = requestAnimationFrame(animate);
                   const delta = clock.getDelta();
                   viz.update(delta);
                   // Subtle mouse orbit
                   viz.group.rotation.y = mouse.x * 0.3;
                 };
-
-                const interval = setInterval(animate, 1000 / 60);
+                animate();
 
                 return () => {
-                  clearInterval(interval);
+                  cancelAnimationFrame(frameId);
                   viz.dispose();
                 };
               }}

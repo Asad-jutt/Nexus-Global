@@ -17,6 +17,7 @@ export interface ServiceItem {
   title: string;
   subtitle: string;
   category: string;
+  categories?: string[];
   description: string;
   keyOutcomes: string[];
   shapePreset: GeometryType;

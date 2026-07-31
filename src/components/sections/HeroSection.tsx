@@ -75,17 +75,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             modelRef.current = model;
 
             let clock = new THREE.Clock();
+            let frameId: number;
 
-            // Return frame update handler
             const animate = () => {
+              frameId = requestAnimationFrame(animate);
               const delta = clock.getDelta();
               model.update(delta, mouse);
             };
-
-            const interval = setInterval(animate, 1000 / 60);
+            animate();
 
             return () => {
-              clearInterval(interval);
+              cancelAnimationFrame(frameId);
               model.dispose();
             };
           }}
@@ -110,7 +110,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-cyan-500/30 text-cyan-300 text-xs font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(0,240,255,0.15)] pointer-events-auto"
           >
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-            Systemic Enterprise Architecture & AI Ops
+            Strategic Management & Digital Transformation
           </motion.div>
 
           {/* Interactive 3D Model Trigger Banner */}
@@ -122,7 +122,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg glass-panel hover:bg-white/10 text-xs font-mono text-slate-300 hover:text-cyan-300 transition-all pointer-events-auto cursor-pointer border border-white/10"
           >
             <Layers className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Pulse Liquid Surface</span>
+            <span>Pulse 3D Model</span>
           </motion.button>
         </div>
 
@@ -135,7 +135,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             className="font-syne font-extrabold text-4xl sm:text-6xl md:text-7xl tracking-tight leading-[1.08] text-white mb-6"
           >
             Architecting <br />
-            <span className="text-gradient-cyan">Exponential</span> Futures.
+            <span className="text-gradient-cyan">Exponential</span> Growth.
           </motion.h1>
 
           <motion.p
@@ -144,7 +144,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenContact, onFpsUp
             transition={{ duration: 0.6, ease: easingPresets.smooth, delay: 0.15 }}
             className="text-slate-300 text-base sm:text-lg md:text-xl font-normal leading-relaxed max-w-2xl mb-8"
           >
-            Nexus Global unifies quantum economic modeling, autonomous AI agentic networks, and sovereign risk engineering for global market leaders.
+            Nexus Global unifies corporate strategy, digital transformation, operational excellence, and cyber risk governance for global market leaders.
           </motion.p>
 
           {/* Action CTAs */}
