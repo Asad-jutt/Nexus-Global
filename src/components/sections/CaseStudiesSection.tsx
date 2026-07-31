@@ -47,9 +47,9 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenCo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-3">
+        <ScrollReveal className="flex flex-col items-center text-center mb-6 gap-4">
+          <div className="flex flex-col items-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-2">
               <BarChart3 className="w-3.5 h-3.5" />
               Empirical Case Telemetry
             </div>
@@ -59,7 +59,7 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenCo
           </div>
 
           {/* Case Study Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1 no-scrollbar w-full">
             {CASE_STUDIES.map((cs, idx) => (
               <button
                 key={cs.id}
@@ -76,11 +76,69 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenCo
           </div>
         </ScrollReveal>
 
-        {/* 3D Visualization Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* 3D Visualization Area & Telemetry Details - Centered Stacked Layout with Expanded Width */}
+        <div className="flex flex-col items-center gap-8 max-w-[896px] mx-auto w-full h-[500px]">
           
-          {/* Left: 3D Scene Viewport */}
-          <ScrollClipReveal type="ltr" className="lg:col-span-7 relative h-[420px] rounded-2xl glass-panel border border-cyan-500/30 overflow-hidden group">
+          {/* Telemetry Details Card */}
+          <ScrollReveal delay={0.1} className="w-full">
+            <div className="glass-panel p-8 sm:p-10 rounded-2xl border border-cyan-500/30 relative overflow-hidden flex flex-col items-center text-center w-full mx-auto shadow-[0_0_30px_rgba(0,240,255,0.08)]">
+              <div className="flex items-center justify-center gap-4 mb-4 w-full">
+                <span className="text-xs font-mono uppercase text-cyan-400 tracking-wider">
+                  {currentCase.industry}
+                </span>
+                <span className="text-xs font-mono text-slate-500">
+                  Case ID: #{currentCase.id.slice(0, 6)}
+                </span>
+              </div>
+
+              <h3 className="font-syne font-bold text-2xl sm:text-3xl text-white mb-4">
+                {currentCase.title}
+              </h3>
+
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 max-w-2xl mx-auto">
+                {currentCase.summary}
+              </p>
+
+              {/* Active Selected Point Callout */}
+              <div className="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/30 mb-6 w-full max-w-xl mx-auto">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-mono text-slate-400">{currentDataPoint.label} ({currentDataPoint.year})</span>
+                  <span className="text-xs font-mono text-cyan-400 font-bold">Index: {currentDataPoint.value}</span>
+                </div>
+                <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500"
+                    style={{ width: `${Math.min(100, (currentDataPoint.value / 200) * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-6 border-t border-white/10 w-full max-w-xl mx-auto">
+                <div className="text-center">
+                  <div className="font-syne font-extrabold text-3xl sm:text-4xl text-cyan-300">
+                    {currentCase.headlineStat}
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-wider mt-1">
+                    {currentCase.statLabel}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    soundEngine.playClick();
+                    setModalCaseStudy(currentCase);
+                  }}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border border-cyan-500/40 text-xs sm:text-sm font-syne font-bold uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_20px_rgba(0,240,255,0.15)]"
+                >
+                  Full Case Study
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* 3D Scene Viewport */}
+          <ScrollClipReveal type="ltr" className="relative w-full h-[380px] rounded-2xl glass-panel border border-cyan-500/30 overflow-hidden group">
             <Canvas3D
               onSceneReady={({ scene, camera, mouse }) => {
                 camera.position.set(0, 3.2, 7.5);
@@ -144,64 +202,6 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ onOpenCo
               </div>
             </div>
           </ScrollClipReveal>
-
-          {/* Right: Telemetry Details Card */}
-          <ScrollReveal delay={0.2} className="lg:col-span-5 flex flex-col justify-between h-full space-y-6">
-            <div className="glass-panel p-8 rounded-2xl border border-white/10 relative overflow-hidden">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-mono uppercase text-cyan-400 tracking-wider">
-                  {currentCase.industry}
-                </span>
-                <span className="text-xs font-mono text-slate-500">
-                  Case ID: #{currentCase.id.slice(0, 6)}
-                </span>
-              </div>
-
-              <h3 className="font-syne font-bold text-2xl text-white mb-4">
-                {currentCase.title}
-              </h3>
-
-              <p className="text-slate-300 text-sm leading-relaxed mb-6">
-                {currentCase.summary}
-              </p>
-
-              {/* Active Selected Point Callout */}
-              <div className="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/30 mb-6">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-mono text-slate-400">{currentDataPoint.label} ({currentDataPoint.year})</span>
-                  <span className="text-xs font-mono text-cyan-400 font-bold">Index: {currentDataPoint.value}</span>
-                </div>
-                <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500"
-                    style={{ width: `${Math.min(100, (currentDataPoint.value / 200) * 100)}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                <div>
-                  <div className="font-syne font-extrabold text-3xl text-cyan-300">
-                    {currentCase.headlineStat}
-                  </div>
-                  <div className="text-[10px] font-mono text-slate-400 uppercase">
-                    {currentCase.statLabel}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    soundEngine.playClick();
-                    setModalCaseStudy(currentCase);
-                  }}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border border-cyan-500/40 text-xs font-syne font-bold uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  Full Case Study
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </ScrollReveal>
 
         </div>
 

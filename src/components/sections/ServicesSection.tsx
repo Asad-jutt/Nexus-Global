@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { SERVICES_DATA } from '../../data/consultancyData';
 import { ServiceItem } from '../../types';
 import { MiniCard3D } from '../3d/MiniCard3D';
 import { ServiceModal } from '../ui/ServiceModal';
 import { soundEngine } from '../../utils/audio';
 import { ScrollReveal } from '../Animations/ScrollReveal';
-import { ScrollStaggerContainer, ScrollStaggerItem } from '../Animations/ScrollStagger';
 import { Layers, ArrowUpRight, Filter } from 'lucide-react';
 
 interface ServicesSectionProps {
@@ -27,20 +27,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
       const sub = hash.replace('#services-', '');
       if (sub === 'strategy') {
         setActiveCategory('Strategy & Growth');
-        const s = SERVICES_DATA.find((x) => x.id === 'quantum-strategy');
-        if (s) setSelectedService(s);
       } else if (sub === 'tech' || sub === 'ai') {
         setActiveCategory('Technology & AI');
-        const s = SERVICES_DATA.find((x) => x.id === 'ai-transformation');
-        if (s) setSelectedService(s);
       } else if (sub === 'ops') {
         setActiveCategory('Operations');
-        const s = SERVICES_DATA.find((x) => x.id === 'cyber-sovereignty');
-        if (s) setSelectedService(s);
-      } else if (sub === 'change') {
-        setActiveCategory('All');
-        const s = SERVICES_DATA.find((x) => x.id === 'capital-allocation');
-        if (s) setSelectedService(s);
+      } else if (sub === 'change' || sub === 'finance') {
+        setActiveCategory('Finance & M&A');
       }
     };
 
@@ -52,8 +44,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
   const filteredServices = activeCategory === 'All'
     ? SERVICES_DATA
     : SERVICES_DATA.filter((s) =>
-        s.category === activeCategory ||
-        (s.categories && s.categories.includes(activeCategory))
+        s.category.toLowerCase().trim() === activeCategory.toLowerCase().trim() ||
+        (s.categories && s.categories.some((c) => c.toLowerCase().trim() === activeCategory.toLowerCase().trim()))
       );
 
   return (
@@ -86,33 +78,44 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
 
         {/* Category Filters */}
         <ScrollReveal delay={0.1} className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
-          <Filter className="w-4 h-4 text-slate-500 shrink-0 mr-1" />
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                soundEngine.playClick();
-                setActiveCategory(cat);
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-mono whitespace-nowrap transition-all cursor-pointer ${
-                activeCategory === cat
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_15px_rgba(0,240,255,0.2)]'
-                  : 'bg-slate-900/60 text-slate-400 border border-white/5 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+          <Filter className="w-4 h-4 text-cyan-400 shrink-0 mr-1" />
+          {categories.map((cat) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => {
+                  soundEngine.playClick();
+                  setActiveCategory(cat);
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-mono whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 ${
+                  isActive
+                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 shadow-[0_0_20px_rgba(0,240,255,0.25)] font-semibold scale-105'
+                    : 'bg-slate-900/80 text-slate-400 border border-white/10 hover:text-white hover:border-white/20 hover:bg-slate-800/60'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full transition-colors ${isActive ? 'bg-cyan-400 animate-pulse' : 'bg-slate-600'}`} />
+                {cat}
+              </button>
+            );
+          })}
         </ScrollReveal>
 
-        {/* Service Cards Grid - 4 Columns Layout */}
-        <ScrollStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredServices.map((service) => {
-            const isHovered = hoveredCardId === service.id;
+        {/* Service Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[360px]">
+          <AnimatePresence mode="popLayout">
+            {filteredServices.map((service) => {
+              const isHovered = hoveredCardId === service.id;
 
-            return (
-              <ScrollStaggerItem key={service.id}>
-                <div
+              return (
+                <motion.div
+                  key={service.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9, y: 15 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -15 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   onMouseEnter={() => {
                     setHoveredCardId(service.id);
                     soundEngine.playHover();
@@ -142,7 +145,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
                         isHovered={isHovered}
                       />
 
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 px-2.5 py-1 rounded bg-slate-900/80 border border-white/5">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-300 px-2.5 py-1 rounded bg-slate-900/90 border border-cyan-500/20">
                         {service.category}
                       </span>
                     </div>
@@ -172,11 +175,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenContact 
                     </div>
                   </div>
 
-                </div>
-              </ScrollStaggerItem>
-            );
-          })}
-        </ScrollStaggerContainer>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
 
       </div>
 
